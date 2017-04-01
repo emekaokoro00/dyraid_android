@@ -3,6 +3,7 @@ package com.dyraid.dyraid;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -324,7 +325,8 @@ public class BasicSignInActivity extends AppCompatActivity implements LoaderCall
             }
 
             // TODO: register the new account here.
-            return true;
+            //return true;
+            return false; //CHANGE BACK
         }
 
         @Override
@@ -334,6 +336,10 @@ public class BasicSignInActivity extends AppCompatActivity implements LoaderCall
 
             if (success) {
                 finish();
+                //get user details
+                Intent myIntent = new Intent(BasicSignInActivity.this, MainActivity.class);
+                // myIntent.putExtra()... from user details
+                BasicSignInActivity.this.startActivity(myIntent);
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
