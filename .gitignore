@@ -1,0 +1,7 @@
+env
+*.DS_Store
+*.pyc
+__pycache__
+*.sqlite3
+bower_components
+site-packages
