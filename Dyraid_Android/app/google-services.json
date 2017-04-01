@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "844650570857",
+    "project_id": "dyraid-1-155117"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:844650570857:android:a5f9281e9a0d45ba",
+        "android_client_info": {
+          "package_name": "com.dyraid.dyraid"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "844650570857-vmpjsmrfqvn7mc4af9mcf6gdikbm0raj.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "844650570857-4uv66ps3uva2c2s5hhsvsdtqusc2c6di.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dyraid.dyraid",
+            "certificate_hash": "68512fcd54fa99bc26206dae8af61f8e6df27bb4"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2oSdqDaWyy4KsEOuX5Q9StJlDQotJQCQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
