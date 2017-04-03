@@ -14,6 +14,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        EditText editText = (EditText) findViewById(R.id.editText);
+
+        Intent intent = getIntent();
+        String email = intent.getStringExtra("email");
+        editText.setText(email);
     }
 
     public void sendMessage(View view) {
