@@ -100,11 +100,15 @@ public class BasicSignInActivity extends AppCompatActivity implements LoaderCall
                 String mmPassword = mPasswordView.getText().toString();
 
                 Response.Listener<String> responseListener = new Response.Listener<String>() {
+                // Response.Listener<JSONObject> responseListener = new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(String response){
+                    //public void onResponse(JSONObject jsonResponse){
                         try {
                             JSONObject jsonResponse = new JSONObject(response);
                             boolean success = jsonResponse.getBoolean("success");
+
+                            //boolean success = jsonResponse.getBoolean("success");
 
                             if (success){
                                 //get user details
@@ -128,6 +132,7 @@ public class BasicSignInActivity extends AppCompatActivity implements LoaderCall
                 };
 
                 LoginRequest loginRequest = new LoginRequest(mmEmail, mmPassword, responseListener);
+                //LoginRequest loginRequest = new LoginRequest(mmEmail, mmPassword,responseListener);
                 RequestQueue queue = Volley.newRequestQueue(BasicSignInActivity.this);
                 queue.add(loginRequest);
 
