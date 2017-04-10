@@ -21,6 +21,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;//
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -31,8 +32,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.android.volley.AuthFailureError;//
+import com.android.volley.Request;//
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;//
+import com.android.volley.toolbox.JsonObjectRequest;//
+import com.android.volley.toolbox.StringRequest;//
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
@@ -40,7 +46,9 @@ import org.json.JSONObject;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;//
 import java.util.List;
+import java.util.Map;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -96,8 +104,37 @@ public class BasicSignInActivity extends AppCompatActivity implements LoaderCall
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                String mmEmail = mEmailView.getText().toString();
+                final String mmEmail = mEmailView.getText().toString();
                 String mmPassword = mPasswordView.getText().toString();
+
+
+                String url = "http://localhost:8000/home/rest-auth/login";
+                final String requestBody = "http://localhost:8000/home/rest-auth/login";
+
+                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.i("onResponse", response.toString());
+                        mEmailView.setText("got thehh");
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("onErrorResponse", error.toString());
+                        mEmailView.setText("got error");
+                    }
+                }) {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> headers = new HashMap<>();
+                        // Basic Authentication
+                        //String auth = "Basic " + Base64.encodeToString(CONSUMER_KEY_AND_SECRET.getBytes(), Base64.NO_WRAP);
+                        String auth = "Basic cjMzZXVWeG5ZSDN3NjJ1RUdhV1NtcDAzYzpDa0h5Q3N1ZXF5ZXVobTExWURnTmpKMUZWRFN6OEk5TDFXWXJVUTFQWTNPZTcxcWlGdQ==";
+                        headers.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                        headers.put("Authorization", auth);
+                        return headers;
+                    }
+                };
 
                 Response.Listener<String> responseListener = new Response.Listener<String>() {
                 // Response.Listener<JSONObject> responseListener = new Response.Listener<JSONObject>() {
@@ -106,19 +143,18 @@ public class BasicSignInActivity extends AppCompatActivity implements LoaderCall
                     //public void onResponse(JSONObject jsonResponse){
                         try {
                             JSONObject jsonResponse = new JSONObject(response);
-                            boolean success = jsonResponse.getBoolean("success");
-
-                            //boolean success = jsonResponse.getBoolean("success");
+                            // boolean success = jsonResponse.getBoolean("success");
+                            boolean success = true;
 
                             if (success){
                                 //get user details
-                                String email = jsonResponse.getString("email");
-                                String password = jsonResponse.getString("password");
+                                //String email = jsonResponse.getString("email");
+                                //String password = jsonResponse.getString("password");
 
                                 Intent myIntent = new Intent(BasicSignInActivity.this, MainActivity.class);
                                 // myIntent.putExtra("username", username)
-                                myIntent.putExtra("email", email);
-                                myIntent.putExtra("password", password);
+                                //myIntent.putExtra("email", email);
+                                //myIntent.putExtra("password", password);
 
                                 BasicSignInActivity.this.startActivity(myIntent);
                             }else{
@@ -130,11 +166,36 @@ public class BasicSignInActivity extends AppCompatActivity implements LoaderCall
                         }
                     }
                 };
+                Response.ErrorListener errorListener = new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("onErrorResponse", error.toString());
+                        mEmailView.setText("Error:" + error.getMessage());
+                    }
+                };
 
-                LoginRequest loginRequest = new LoginRequest(mmEmail, mmPassword, responseListener);
+                url = "http://www.google.com";
+                StringRequest aSimpleRequest = new StringRequest(Request.Method.GET, url,
+                        new Response.Listener<String>() {
+                           @Override
+                            public void onResponse(String response) {
+                               mEmailView.setText(response);
+                           }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                mEmailView.setText("Nope");
+                            }
+                        }
+                );
+
+                LoginRequest loginRequest = new LoginRequest(mmEmail, mmPassword, responseListener, errorListener);
                 //LoginRequest loginRequest = new LoginRequest(mmEmail, mmPassword,responseListener);
                 RequestQueue queue = Volley.newRequestQueue(BasicSignInActivity.this);
                 queue.add(loginRequest);
+                //queue.add(jsonObjectRequest);
+                //queue.add(aSimpleRequest);
 
 
 
