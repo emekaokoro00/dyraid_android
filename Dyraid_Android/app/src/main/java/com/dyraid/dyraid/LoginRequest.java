@@ -20,6 +20,7 @@ import java.util.Map;
 public class LoginRequest extends StringRequest {
     //private static final String LOGIN_REQUEST_URL = "http://localhost:8000/home/rest-auth/login";//Remove hardcode
     private static final String LOGIN_REQUEST_URL = "http://192.168.56.56:8000/home/rest-auth/login/";//Remove hardcode
+    // private static final String LOGIN_REQUEST_URL = "http://192.168.56.56:8000/userlog/api/";//Remove hardcode
     private Map<String, String> params;
 
     public LoginRequest(String email, String password, Response.Listener<String> listener, Response.ErrorListener errorListener){
