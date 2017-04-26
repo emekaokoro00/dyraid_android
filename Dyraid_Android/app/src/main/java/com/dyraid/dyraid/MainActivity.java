@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         // Display the first 500 characters of the response string.
-                        mTextView.setText("Response is: "+ response.substring(0,500));
+                        mTextView.setText("Response is: "+ response);
                     }
                 },
                 new Response.ErrorListener() {
