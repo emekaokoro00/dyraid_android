@@ -17,4 +17,5 @@
         completions."
     </string>
     <string name="return_message">nothing</string>
+    <string name="list_log">Log List</string>
 </resources>
