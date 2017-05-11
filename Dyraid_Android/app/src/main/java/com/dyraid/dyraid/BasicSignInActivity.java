@@ -107,35 +107,6 @@ public class BasicSignInActivity extends AppCompatActivity implements LoaderCall
                 final String mmEmail = mEmailView.getText().toString();
                 String mmPassword = mPasswordView.getText().toString();
 
-
-                String url = "http://localhost:8000/home/rest-auth/login";
-                final String requestBody = "http://localhost:8000/home/rest-auth/login";
-
-                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, null, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.i("onResponse", response.toString());
-                        mEmailView.setText("got thehh");
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("onErrorResponse", error.toString());
-                        mEmailView.setText("got error");
-                    }
-                }) {
-                    @Override
-                    public Map<String, String> getHeaders() throws AuthFailureError {
-                        Map<String, String> headers = new HashMap<>();
-                        // Basic Authentication
-                        //String auth = "Basic " + Base64.encodeToString(CONSUMER_KEY_AND_SECRET.getBytes(), Base64.NO_WRAP);
-                        String auth = "Basic cjMzZXVWeG5ZSDN3NjJ1RUdhV1NtcDAzYzpDa0h5Q3N1ZXF5ZXVobTExWURnTmpKMUZWRFN6OEk5TDFXWXJVUTFQWTNPZTcxcWlGdQ==";
-                        headers.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-                        headers.put("Authorization", auth);
-                        return headers;
-                    }
-                };
-
                 Response.Listener<String> responseListener = new Response.Listener<String>() {
                 // Response.Listener<JSONObject> responseListener = new Response.Listener<JSONObject>() {
                     @Override
@@ -152,9 +123,8 @@ public class BasicSignInActivity extends AppCompatActivity implements LoaderCall
                                 //String password = jsonResponse.getString("password");
 
                                 Intent myIntent = new Intent(BasicSignInActivity.this, MainActivity.class);
-                                // myIntent.putExtra("username", username)
+                                myIntent.putExtra("token", jsonResponse.get("key").toString());
                                 //myIntent.putExtra("email", email);
-                                //myIntent.putExtra("password", password);
 
                                 BasicSignInActivity.this.startActivity(myIntent);
                             }else{
@@ -170,11 +140,15 @@ public class BasicSignInActivity extends AppCompatActivity implements LoaderCall
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e("onErrorResponse", error.toString());
-                        mEmailView.setText("Error:" + error.getMessage());
+                        AlertDialog.Builder builder = new AlertDialog.Builder(BasicSignInActivity.this);
+                        builder.setMessage("Login Failed")
+                                .setNegativeButton("Retry", null)
+                                .create()
+                                .show();
                     }
                 };
 
-                url = "http://www.google.com";
+                String url = "http://www.google.com";
                 StringRequest aSimpleRequest = new StringRequest(Request.Method.GET, url,
                         new Response.Listener<String>() {
                            @Override
@@ -284,11 +258,13 @@ public class BasicSignInActivity extends AppCompatActivity implements LoaderCall
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
             cancel = true;
-        } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
-            cancel = true;
         }
+        // took out to not validate email
+//        else if (!isEmailValid(email)) {
+//            mEmailView.setError(getString(R.string.error_invalid_email));
+//            focusView = mEmailView;
+//            cancel = true;
+//        }
 
         if (cancel) {
             // There was an error; don't attempt login and focus the first

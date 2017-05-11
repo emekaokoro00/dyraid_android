@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -28,6 +29,7 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
 
     public static final String EXTRA_MESSAGE = "com.example.dyraid.MESSAGE";
+    private static final String USERDETAILS_REQUEST_URL = "http://192.168.56.56:8000/home/rest-auth/user/";//Remove hardcode
     private static final String USERLOGLIST_REQUEST_URL = "http://192.168.56.56:8000/userlog/api/";//Remove hardcode
 
     private Context context;
@@ -37,14 +39,61 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        final TextView welcomeTextView = (TextView) findViewById(R.id.welcomeTextView);
         final TextView mTextView = (TextView) findViewById(R.id.mTextView);
         final EditText editText = (EditText) findViewById(R.id.editText);
         final ListView listView = (ListView) findViewById(R.id.mLogListView);
 
+        //get info
+        Intent myIntent = getIntent();
+        final String currentToken = myIntent.getStringExtra("token");
+        // String email = myIntent.getStringExtra("email");
+        editText.setText(currentToken);
+
         //create new Request
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url ="http://www.google.com";
+        // String url ="http://www.google.com";
+
+
+        // Request a string response from the provided URL.
+        StringRequest userDetailsRequest = new StringRequest(Request.Method.GET, USERDETAILS_REQUEST_URL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Display the first 500 characters of the response string.
+                        mTextView.setText("Response is also: " + response);
+
+
+                        ArrayAdapter<String> adapter;
+                        ArrayList<String> items = new ArrayList<String>();
+                        try
+                        {
+                            JSONObject jsonResponse = new JSONObject(response);
+                            String first_name = jsonResponse.get("first_name").toString();
+                            String last_name = jsonResponse.get("last_name").toString();
+                            welcomeTextView.setText("Welcome, " + first_name);
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        mTextView.setText("That didn't work!");
+                    }
+                })
+        {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", "Token " + currentToken);
+                return headers;
+            }
+        };
 
         // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, USERLOGLIST_REQUEST_URL,
@@ -52,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         // Display the first 500 characters of the response string.
-                        mTextView.setText("Response is: "+ response);
+                        mTextView.setText("Response is so: "+ response);
 
                         ArrayAdapter<String> adapter;
                         ArrayList<String> items = new ArrayList<String>();
@@ -78,7 +127,15 @@ public class MainActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 mTextView.setText("That didn't work!");
             }
-        });
+        })
+        {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", "Token " + currentToken);
+                return headers;
+            }
+        };;
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, USERLOGLIST_REQUEST_URL, null, new Response.Listener<JSONObject>() {
@@ -97,15 +154,10 @@ public class MainActivity extends AppCompatActivity {
                 });
 
         // Add the request to the RequestQueue.
+        queue.add(userDetailsRequest);
         queue.add(stringRequest);
-
-
-        //get info
-
-        Intent intent = getIntent();
-        String email = intent.getStringExtra("email");
-        editText.setText(email);
     }
+
 
     public void sendMessage(View view) {
         Intent intent = new Intent(this, DisplayMessageActivity.class);
