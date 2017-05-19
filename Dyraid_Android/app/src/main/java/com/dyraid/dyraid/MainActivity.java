@@ -140,11 +140,11 @@ public class MainActivity extends AppCompatActivity {
                     }
                 },
                 new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                mTextView.setText("That didn't work!");
-            }
-        })
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        mTextView.setText("That didn't work!");
+                    }
+                })
         {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
@@ -178,8 +178,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void sendMessage(View view) {
         Intent intent = new Intent(this, DisplayMessageActivity.class);
-        EditText editText = (EditText) findViewById(R.id.editText);
-        String message = editText.getText().toString();
+//        EditText editText = (EditText) findViewById(R.id.editText);
+//        String message = editText.getText().toString();
+        String message = "test";
         intent.putExtra(EXTRA_MESSAGE + 'd', message);
         startActivity(intent);
     }
