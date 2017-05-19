@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
         final TextView welcomeTextView = (TextView) findViewById(R.id.welcomeTextView);
         final TextView mTextView = (TextView) findViewById(R.id.mTextView);
-        final EditText editText = (EditText) findViewById(R.id.editText);
+        // final EditText editText = (EditText) findViewById(R.id.editText);
         final ListView listView = (ListView) findViewById(R.id.mLogListView);
 
         final User currentUser = new User();
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         //get info
         Intent myIntent = getIntent();
         final String currentToken = myIntent.getStringExtra("token");
-        editText.setText(currentToken);
+        // editText.setText(currentToken);
 
         //create new Request
         // Instantiate the RequestQueue.
