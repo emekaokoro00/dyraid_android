@@ -122,7 +122,8 @@ public class BasicSignInActivity extends AppCompatActivity implements LoaderCall
                                 //String email = jsonResponse.getString("email");
                                 //String password = jsonResponse.getString("password");
 
-                                Intent myIntent = new Intent(BasicSignInActivity.this, MainActivity.class);
+                                // Intent myIntent = new Intent(BasicSignInActivity.this, MainActivity.class);
+                                Intent myIntent = new Intent(BasicSignInActivity.this, Main2Activity.class);
                                 myIntent.putExtra("token", jsonResponse.get("key").toString());
                                 //myIntent.putExtra("email", email);
 
