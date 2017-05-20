@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -49,38 +51,10 @@ public class Main2Activity extends AppCompatActivity {
     private static final String USERDETAILS_REQUEST_URL = "http://192.168.56.56:8000/home/rest-auth/user/";//Remove hardcode
     private static final String USERLOGLIST_REQUEST_URL = "http://192.168.56.56:8000/userlog/api/";//Remove hardcode
 
-    private Context context;
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
-    private SectionsPagerAdapter mSectionsPagerAdapter;
-
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
-    private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main2);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
-
+        /*
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,24 +62,105 @@ public class Main2Activity extends AppCompatActivity {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
+        });*/
+
+
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main2);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        tabLayout.addTab(tabLayout.newTab().setText("Meal"));
+        tabLayout.addTab(tabLayout.newTab().setText("Main"));
+        tabLayout.addTab(tabLayout.newTab().setText("Place"));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+
+
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+        final PagerAdapter adapter = new PagerAdapter
+                (getSupportFragmentManager(), tabLayout.getTabCount());
+        viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        viewPager.setCurrentItem(1);
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
         });
 
-/*
-        final TextView welcomeTextView = (TextView) findViewById(R.id.welcomeTextView);
-        final TextView mTextView = (TextView) findViewById(R.id.mTextView);
-        // final EditText editText = (EditText) findViewById(R.id.editText);
-        final ListView listView = (ListView) findViewById(R.id.mLogListView);
+    }
 
-        final User currentUser = new User();
+    public static class MainFragment extends Fragment {
 
-        //get info
-        Intent myIntent = getIntent();
+
+        /**
+         * The fragment argument representing the section number for this
+         * fragment.
+         */
+        private static final String ARG_SECTION_NUMBER = "section_number";
+
+        public MainFragment() {
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_main2, container, false);
+            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+            // textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+
+            final View header = inflater.inflate(R.layout.userlog_header, null);
+
+            final User currentUser = new User();
+            final FragmentActivity currentActivity = getActivity();
+
+            Main2ActivityDisplay(rootView, header, currentUser, currentActivity);
+
+            return rootView;
+        }
+    }
+
+    public static class MealFragment extends Fragment {
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            return inflater.inflate(R.layout.fragment_meal, container, false);
+        }
+    }
+
+    public static class PlaceholderFragment extends Fragment {
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            return inflater.inflate(R.layout.fragment_main, container, false);
+        }
+    }
+
+
+
+
+    static void Main2ActivityDisplay(View rootView, final View header, final User currentUser, final FragmentActivity currentActivity) {
+
+        final TextView welcomeTextView = (TextView) rootView.findViewById(R.id.welcomeTextView);
+        final TextView mTextView = (TextView) rootView.findViewById(R.id.mTextView);
+        final ListView listView = (ListView) rootView.findViewById(R.id.mLogListView);
+
+        Intent myIntent = currentActivity.getIntent();
         final String currentToken = myIntent.getStringExtra("token");
-        // editText.setText(currentToken);
-
-        //create new Request
-        // Instantiate the RequestQueue.
-        RequestQueue queue = Volley.newRequestQueue(this);
+        //create new Request by Instantiating the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(currentActivity.getApplicationContext());
 
 
         // Request to get user details.
@@ -119,8 +174,7 @@ public class Main2Activity extends AppCompatActivity {
 
                         ArrayAdapter<String> adapter;
                         ArrayList<String> items = new ArrayList<String>();
-                        try
-                        {
+                        try {
                             JSONObject jsonResponse = new JSONObject(response);
                             String username = jsonResponse.get("username").toString();
                             String first_name = jsonResponse.get("first_name").toString();
@@ -129,9 +183,7 @@ public class Main2Activity extends AppCompatActivity {
                             currentUser.setFirst_name(first_name);
                             currentUser.setLast_name(last_name);
                             welcomeTextView.setText("Welcome, " + currentUser.getFirst_name());
-                        }
-                        catch (Exception ex)
-                        {
+                        } catch (Exception ex) {
 
                         }
                     }
@@ -141,8 +193,7 @@ public class Main2Activity extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                         mTextView.setText("That didn't work!");
                     }
-                })
-        {
+                }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<String, String>();
@@ -157,11 +208,10 @@ public class Main2Activity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         // Display the first 500 characters of the response string.
-                        mTextView.setText("Response is so: "+ response);
+                        mTextView.setText("Response is so: " + response);
 
                         ArrayList<UserLog> userLogs = new ArrayList<UserLog>();
-                        try
-                        {
+                        try {
                             JSONArray responseArray = new JSONArray(response);
                             for (int i = 0; i < responseArray.length(); i++) {
                                 // items.add(responseArray.getJSONObject(i).toString());
@@ -170,19 +220,14 @@ public class Main2Activity extends AppCompatActivity {
                                 UserLog userLog = new UserLog(currentUser, log_time, comment);
                                 userLogs.add(userLog);
                             }
-                        }
-                        catch (Exception ex)
-                        {
+                        } catch (Exception ex) {
 
                         }
 
                         // ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this, R.layout.item_layout,R.id.txt,items);
-                        UserLogAdapter adapter = new UserLogAdapter(Main2Activity.this, userLogs);
-                        View header = getLayoutInflater().inflate(R.layout.userlog_header, null);
+                        // UserLogAdapter adapter = new UserLogAdapter(currentActivity.getApplicationContext(), userLogs);
+                        UserLogAdapter adapter = new UserLogAdapter(currentActivity, R.layout.item_layout, userLogs);
                         listView.addHeaderView(header);
-//                        listView.setAdapter(new android.support.v4.widget.SimpleCursorAdapter(this, R.layout.display, cursor, new String[]{
-//                                "_id", "Name", "Address"
-//                        }, new int[]{R.id.id, R.id.name, R.id.add}, 0));
                         listView.setAdapter(adapter);
                     }
                 },
@@ -191,15 +236,15 @@ public class Main2Activity extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                         mTextView.setText("That didn't work!");
                     }
-                })
-        {
+                }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<String, String>();
                 headers.put("Authorization", "Token " + currentToken);
                 return headers;
             }
-        };;
+        };
+        ;
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, USERLOGLIST_REQUEST_URL, null, new Response.Listener<JSONObject>() {
@@ -219,11 +264,45 @@ public class Main2Activity extends AppCompatActivity {
 
         // Add the request to the RequestQueue.
         queue.add(userDetailsRequest);
-        queue.add(stringRequest);*/
-
-
+        queue.add(stringRequest);
     }
 
+
+
+
+
+    // FragmentStatePagerAdapter
+    public class PagerAdapter extends FragmentPagerAdapter {
+        int mNumOfTabs;
+
+        public PagerAdapter(FragmentManager fm, int NumOfTabs) {
+            super(fm);
+            this.mNumOfTabs = NumOfTabs;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+
+            switch (position) {
+                case 0:
+                    MealFragment meal_tab = new MealFragment();
+                    return meal_tab;
+                case 1:
+                    MainFragment main_tab = new MainFragment();
+                    return main_tab;
+                case 2:
+                    PlaceholderFragment plc_tab = new PlaceholderFragment();
+                    return plc_tab;
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return mNumOfTabs;
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -247,75 +326,4 @@ public class Main2Activity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        public PlaceholderFragment() {
-        }
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main2, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-            return rootView;
-        }
-    }
-
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
-        }
-
-        @Override
-        public int getCount() {
-            // Show 3 total pages.
-            return 3;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return "SECTION 1";
-                case 1:
-                    return "SECTION 2";
-                case 2:
-                    return "SECTION 3";
-            }
-            return null;
-        }
-    }
 }

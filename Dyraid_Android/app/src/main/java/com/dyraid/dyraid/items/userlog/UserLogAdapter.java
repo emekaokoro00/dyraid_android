@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.dyraid.dyraid.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by emekaokoro on 5/12/17.
@@ -24,8 +25,20 @@ public class UserLogAdapter extends ArrayAdapter<UserLog> {
         TextView comment;
     }
 
+    private Context context;
+    private int resource;
+    private ArrayList<UserLog> user_logs;
+
     public UserLogAdapter(Context context, ArrayList<UserLog> user_logs) {
         super(context, R.layout.item_layout, user_logs);
+    }
+
+    public UserLogAdapter(Context context, int resource, ArrayList<UserLog> user_logs)
+    {
+        super(context, resource, user_logs);
+        this.context=context;
+        this.resource=resource;
+        this.user_logs=user_logs;
     }
 
     @Override
@@ -37,7 +50,8 @@ public class UserLogAdapter extends ArrayAdapter<UserLog> {
         if (convertView == null) {
             // If there's no view to re-use, inflate a brand new view for row
             viewHolder = new ViewHolder();
-            LayoutInflater inflater = LayoutInflater.from(getContext());
+            // LayoutInflater inflater = LayoutInflater.from(getContext()); // for Activity
+            LayoutInflater inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE); // for Fragment in Activity
             convertView = inflater.inflate(R.layout.userlog_layout, parent, false);
             viewHolder.num = (TextView) convertView.findViewById(R.id.num);
             viewHolder.log_time = (TextView) convertView.findViewById(R.id.log_time);
