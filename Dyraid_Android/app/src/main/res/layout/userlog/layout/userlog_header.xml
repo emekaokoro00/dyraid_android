@@ -14,7 +14,7 @@
         android:layout_weight="0.5"
         android:text="No."
         android:layout_gravity="left"
-        android:background="#88FF0000"
+        android:background="#777777"
         >
     </TextView>
     <TextView
@@ -24,7 +24,7 @@
         android:layout_weight="1"
         android:text="Time"
         android:layout_gravity="left"
-        android:background="#88FF0000"
+        android:background="#777777"
         >
     </TextView>
     <TextView
@@ -34,7 +34,7 @@
         android:layout_weight="2"
         android:text="Comment"
         android:layout_gravity="left"
-        android:background="#88FF0000"
+        android:background="#777777"
         >
     </TextView>
 </LinearLayout>

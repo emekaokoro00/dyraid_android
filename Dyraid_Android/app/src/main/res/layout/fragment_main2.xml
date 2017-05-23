@@ -10,22 +10,30 @@
         android:layout_height="match_parent"
         android:scrollbars="none">
 
-        <RelativeLayout
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentTop="true">
             <LinearLayout
                 android:id="@+id/natural"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="300dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 android:orientation="horizontal"
                 android:background="@drawable/sea">
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/imageLinear"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:layout_editor_absoluteY="81dp"
+                tools:layout_editor_absoluteX="8dp"
+                app:layout_constraintHorizontal_bias="0.5">
                 <custom_overrides.CircleImageView
                     xmlns:app="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/profile_image"
@@ -56,12 +64,15 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="5dp"/>
             </LinearLayout>
-
             <LinearLayout
-                android:layout_below="@+id/natural"
-                android:layout_width="match_parent"
+                android:id="@+id/imageLinear2"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/natural"
+                android:orientation="vertical"
+                tools:layout_editor_absoluteX="0dp">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -107,73 +118,25 @@
                 </LinearLayout>
 
                 <View
+                    android:id="@+id/View1"
                     android:layout_width="match_parent"
                     android:layout_height="0.3dp"
                     android:background="#99A1AC"
                     android:layout_marginTop="20dp"/>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="20dp">
-                    <ImageView
-                        android:layout_width="15dp"
-                        android:layout_height="15dp"
-                        android:layout_marginLeft="50dp"
-                        android:background="@drawable/ic_cup"
-                        android:layout_gravity="center"/>
-                    <custom_overrides.TextViewNP
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="1 p.m"
-                        android:textColor="@color/timecolor"
-                        android:textSize="14dp"
-                        android:letterSpacing="0.025"
-                        android:layout_marginLeft="25dp"
-                        android:layout_marginTop="10dp"/>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-                        <custom_overrides.TextViewNP
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Lunch"
-                            android:letterSpacing="0.025"
-                            android:textColor="@color/schedulecolor"
-                            android:layout_marginLeft="30dp"
-                            android:textSize="14dp"/>
-                        <custom_overrides.TextViewNP
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Lunch Schedule Time"
-                            android:layout_marginLeft="30dp"
-                            android:letterSpacing="0.025"
-                            android:textColor="@color/statementcolor"
-                            android:textSize="12dp"
-                            android:layout_marginTop="5dp"/>
-                    </LinearLayout>
-                </LinearLayout>
 
-                <View
+
+                <ListView
+                    android:id="@+id/mLogListView"
                     android:layout_width="match_parent"
-                    android:layout_height="0.3dp"
-                    android:background="#99A1AC"
-                    android:layout_marginTop="20dp"/>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="20dp">
-                    <ListView
-                        android:id="@+id/mLogListView"
-                        android:layout_alignParentTop="true"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="0dp"
-                        android:layout_marginRight="30dp"
-                        android:layout_marginTop="8dp" />
-                </LinearLayout>
+                    android:layout_height="150dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/View1"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginLeft="0dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginTop="8dp"
+                    android:visibility="visible" />
 
                 <View
                     android:layout_width="match_parent"
@@ -183,7 +146,7 @@
                     android:layout_marginBottom="20dp"/>
 
             </LinearLayout>
-        </RelativeLayout>
+        </android.support.constraint.ConstraintLayout>
     </ScrollView>
 
     <ImageView
@@ -199,7 +162,7 @@
         android:layout_alignParentTop="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Jessica Roy"
+        android:text="Anon"
         android:layout_gravity="center"
         android:gravity="center"
         android:letterSpacing="0.025"

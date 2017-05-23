@@ -126,7 +126,7 @@ public class MainFragment extends Fragment {
 
                         // ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this, R.layout.item_layout,R.id.txt,items);
                         // UserLogAdapter adapter = new UserLogAdapter(currentActivity.getApplicationContext(), userLogs);
-                        UserLogAdapter adapter = new UserLogAdapter(currentActivity, R.layout.item_layout, userLogs);
+                        UserLogAdapter adapter = new UserLogAdapter(currentActivity, R.layout.userlog_layout, userLogs);
                         listView.addHeaderView(header);
                         listView.setAdapter(adapter);
                     }
