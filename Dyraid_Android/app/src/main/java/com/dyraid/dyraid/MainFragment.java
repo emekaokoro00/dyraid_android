@@ -48,8 +48,6 @@ public class MainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main2, container, false);
-        TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-
         final View header = inflater.inflate(R.layout.userlog_header, null);
 
         final User currentUser = new User();
@@ -63,8 +61,7 @@ public class MainFragment extends Fragment {
 
     static void Main2ActivityDisplay(View rootView, final View header, final User currentUser, final FragmentActivity currentActivity) {
 
-        final TextView welcomeTextView = (TextView) rootView.findViewById(R.id.welcomeTextView);
-        final TextView mTextView = (TextView) rootView.findViewById(R.id.mTextView);
+        final TextView nameTextView = (TextView) rootView.findViewById(R.id.nameTextView);
         final ListView listView = (ListView) rootView.findViewById(R.id.mLogListView);
 
         Intent myIntent = currentActivity.getIntent();
@@ -78,10 +75,6 @@ public class MainFragment extends Fragment {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        // Display the first 500 characters of the response string.
-                        mTextView.setText("Response is also: " + response);
-
-
                         ArrayAdapter<String> adapter;
                         ArrayList<String> items = new ArrayList<String>();
                         try {
@@ -92,7 +85,7 @@ public class MainFragment extends Fragment {
                             currentUser.setUsername(username);
                             currentUser.setFirst_name(first_name);
                             currentUser.setLast_name(last_name);
-                            welcomeTextView.setText("Welcome, " + currentUser.getFirst_name());
+                            nameTextView.setText("Welcome, " + currentUser.getFirst_name());
                         } catch (Exception ex) {
 
                         }
@@ -101,7 +94,7 @@ public class MainFragment extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        mTextView.setText("That didn't work!");
+                        // mTextView.setText("That didn't work!");
                     }
                 }) {
             @Override
@@ -117,9 +110,6 @@ public class MainFragment extends Fragment {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        // Display the first 500 characters of the response string.
-                        mTextView.setText("Response is so: " + response);
-
                         ArrayList<UserLog> userLogs = new ArrayList<UserLog>();
                         try {
                             JSONArray responseArray = new JSONArray(response);
@@ -144,7 +134,7 @@ public class MainFragment extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        mTextView.setText("That didn't work!");
+                        // mTextView.setText("That didn't work!");
                     }
                 }) {
             @Override
@@ -154,23 +144,6 @@ public class MainFragment extends Fragment {
                 return headers;
             }
         };
-        ;
-
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                (Request.Method.GET, USERLOGLIST_REQUEST_URL, null, new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        mTextView.setText("Response: " + response.toString());
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
-                        mTextView.setText("That didn't work!");
-                    }
-                });
 
         // Add the request to the RequestQueue.
         queue.add(userDetailsRequest);
