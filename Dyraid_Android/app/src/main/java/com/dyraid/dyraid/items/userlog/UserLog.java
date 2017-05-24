@@ -10,9 +10,9 @@ import java.util.Date;
 
 public class UserLog {
 
-    public User user;
-    public Date log_time;
-    public String comment;
+    private User user;
+    private Date log_time;
+    private String comment;
 
     public User getUser() {
         return user;

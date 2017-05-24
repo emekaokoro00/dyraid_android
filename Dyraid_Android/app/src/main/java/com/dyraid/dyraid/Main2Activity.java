@@ -20,6 +20,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.dyraid.dyraid.items.meal.MealFragment;
+
 public class Main2Activity extends AppCompatActivity {
 
     public static final String EXTRA_MESSAGE = "com.example.dyraid.MESSAGE";
@@ -75,14 +77,14 @@ public class Main2Activity extends AppCompatActivity {
 
     }
 
-    public static class MealFragment extends Fragment {
+    /*public static class MealFragment extends Fragment {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             return inflater.inflate(R.layout.fragment_meal, container, false);
         }
     }
-
+*/
     public static class PlaceholderFragment extends Fragment {
 
         @Override
