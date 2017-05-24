@@ -30,7 +30,7 @@ public class UserLogAdapter extends ArrayAdapter<UserLog> {
     private ArrayList<UserLog> user_logs;
 
     public UserLogAdapter(Context context, ArrayList<UserLog> user_logs) {
-        super(context, R.layout.item_layout, user_logs);
+        super(context, R.layout.userlog_layout, user_logs);
     }
 
     public UserLogAdapter(Context context, int resource, ArrayList<UserLog> user_logs)

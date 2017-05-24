@@ -20,6 +20,7 @@ android {
     sourceSets {
         main {
             res.srcDirs = [
+                    'src/main/res/layout/meal',
                     'src/main/res/layout/userlog',
                     'src/main/res/layout',
                     'src/main/res'
