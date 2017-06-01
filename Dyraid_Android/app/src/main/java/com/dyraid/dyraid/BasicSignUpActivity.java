@@ -69,7 +69,8 @@ public class BasicSignUpActivity extends AppCompatActivity implements LoaderMana
     // UI references.
     private EditText mUsernameView;
     private AutoCompleteTextView mEmailView;
-    private EditText mPasswordView;
+    private EditText mPassword1View;
+    private EditText mPassword2View;
     private View mProgressView;
     private View mSignUpFormView;
 
@@ -83,28 +84,45 @@ public class BasicSignUpActivity extends AppCompatActivity implements LoaderMana
 
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
-
-        mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mEmailView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    validateEmail();
                 }
-                return false;
             }
         });
 
-        Button mEmailRegisterButton = (Button) findViewById(R.id.register_button);
-        Button mSignInLink = (Button) findViewById(R.id.link_to_sign_in);
+        mPassword1View = (EditText) findViewById(R.id.password1);
+        mPassword1View.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    validatePassword();
+                }
+            }
+        });
+//        mPassword1View.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+//            @Override
+//            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+//                if (id == R.id.register_button || id == EditorInfo.IME_NULL) {
+//                    attemptLogin();
+//                    return true;
+//                }
+//                return false;
+//            }
+//        });
 
+        mPassword2View = (EditText) findViewById(R.id.password2);
+
+        Button mEmailRegisterButton = (Button) findViewById(R.id.register_button);
         mEmailRegisterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final String mmUsername = mUsernameView.getText().toString();
                 final String mmEmail = mEmailView.getText().toString();
-                String mmPassword = mPasswordView.getText().toString();
+                String mmPassword1 = mPassword1View.getText().toString();
+                String mmPassword2 = mPassword2View.getText().toString();
 
                 Response.Listener<String> responseListener = new Response.Listener<String>() {
                     // Response.Listener<JSONObject> responseListener = new Response.Listener<JSONObject>() {
@@ -143,14 +161,13 @@ public class BasicSignUpActivity extends AppCompatActivity implements LoaderMana
                     }
                 };
 
-                BasicSignUpRequest basicSignUpRequest = new BasicSignUpRequest(mmUsername, mmEmail, mmPassword, responseListener, errorListener);
+                BasicSignUpRequest basicSignUpRequest = new BasicSignUpRequest(mmUsername, mmEmail, mmPassword1, mmPassword2, responseListener, errorListener);
                 RequestQueue queue = Volley.newRequestQueue(BasicSignUpActivity.this);
                 queue.add(basicSignUpRequest);
-
-                // attemptLogin();
             }
         });
 
+        Button mSignInLink = (Button) findViewById(R.id.link_to_sign_in);
         mSignInLink.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Intent myIntent = new Intent(BasicSignUpActivity.this, BasicSignInActivity.class);
@@ -211,28 +228,19 @@ public class BasicSignUpActivity extends AppCompatActivity implements LoaderMana
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
-    private void attemptLogin() {
+    private void validateEmail() {
         if (mAuthTask != null) {
             return;
         }
 
         // Reset errors.
         mEmailView.setError(null);
-        mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
-
-        // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
-            cancel = true;
-        }
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
@@ -240,13 +248,48 @@ public class BasicSignUpActivity extends AppCompatActivity implements LoaderMana
             focusView = mEmailView;
             cancel = true;
         }
-        // took out to not validate email
-//        else if (!isEmailValid(email)) {
-//            mEmailView.setError(getString(R.string.error_invalid_email));
-//            focusView = mEmailView;
-//            cancel = true;
-//        }
+        else if (!isEmailValid(email)) {
+            mEmailView.setError(getString(R.string.error_invalid_email));
+            focusView = mEmailView;
+            cancel = true;
+        }
+        focusViewOrProceed(cancel, focusView);
+    }
 
+    private void validatePassword() {
+        if (mAuthTask != null) {
+            return;
+        }
+
+        // Reset errors.
+        mEmailView.setError(null);
+        mPassword1View.setError(null);
+
+        // Store values at the time of the login attempt.
+        String email = mEmailView.getText().toString();
+        String password1 = mPassword1View.getText().toString();
+        String password2 = mPassword2View.getText().toString();
+
+        boolean cancel = false;
+        View focusView = null;
+
+        // Check for a valid password, if the user entered one.
+        if (TextUtils.isEmpty(password1) || !isPasswordValid(password1)) {
+            mPassword1View.setError(getString(R.string.error_invalid_password));
+            focusView = mPassword1View;
+            cancel = true;
+        }
+        //Check for equal passwords
+        if (!arePasswordsEqual(password1, password2)) {
+            mPassword2View.setError(getString(R.string.error_unequal_password));
+            focusView = mPassword2View;
+            cancel = true;
+        }
+        focusViewOrProceed(cancel, focusView);
+    }
+
+    private void focusViewOrProceed(boolean cancel, View focusView)
+    {
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
@@ -255,8 +298,8 @@ public class BasicSignUpActivity extends AppCompatActivity implements LoaderMana
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            // mAuthTask = new UserLoginTask(email, password1);
+            // mAuthTask.execute((Void) null);
         }
     }
 
@@ -268,6 +311,11 @@ public class BasicSignUpActivity extends AppCompatActivity implements LoaderMana
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
         return password.length() > 4;
+    }
+
+    private boolean arePasswordsEqual(String password1, String password2) {
+        //TODO: Replace this with your own logic
+        return password1.equals(password2);
     }
 
     /**
@@ -410,8 +458,8 @@ public class BasicSignUpActivity extends AppCompatActivity implements LoaderMana
                 finish();
                 //Put intent?
             } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
+                mPassword1View.setError(getString(R.string.error_incorrect_password));
+                mPassword1View.requestFocus();
             }
         }
 

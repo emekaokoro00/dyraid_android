@@ -11,5 +11,5 @@ public class AppConfig {
     public static final String LOGIN_REQUEST_URL = "http://192.168.56.56:8000/home/rest-auth/login/";
 
     // Server user register url
-    public static String SIGNUP_REQUEST_URL = "http://192.168.56.56:8000/home/rest-auth/login/";
+    public static String SIGNUP_REQUEST_URL = "http://192.168.56.56:8000/home/rest-auth/registration/";
 }

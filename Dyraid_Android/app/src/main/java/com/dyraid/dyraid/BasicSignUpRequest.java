@@ -16,12 +16,13 @@ public class BasicSignUpRequest extends StringRequest {
     private static final String SIGNUP_REQUEST_URL = AppConfig.SIGNUP_REQUEST_URL;
     private Map<String, String> params;
 
-    public BasicSignUpRequest(String username, String email, String password, Response.Listener<String> listener, Response.ErrorListener errorListener) {
+    public BasicSignUpRequest(String username, String email, String password1, String password2, Response.Listener<String> listener, Response.ErrorListener errorListener) {
         super(Request.Method.POST, SIGNUP_REQUEST_URL, listener, errorListener);
         params = new HashMap<>();
         params.put("username", username);
         params.put("email", email);
-        params.put("password", password);
+        params.put("password1", password1);
+        params.put("password2", password2);
     }
 
     @Override
