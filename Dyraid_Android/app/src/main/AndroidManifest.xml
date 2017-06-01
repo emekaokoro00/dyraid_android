@@ -16,17 +16,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
             android:name=".BasicSignInActivity"
             android:label="@string/title_activity_basic_sign_in">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"></activity>
+        <activity
+            android:name=".BasicSignUpActivity"
+            android:label="@string/title_activity_basic_sign_up">
+        </activity>
+        <activity android:name=".MainActivity" />
         <activity
             android:name=".DisplayMessageActivity"
             android:parentActivityName=".MainActivity">
@@ -37,7 +39,7 @@
         <activity
             android:name=".Main2Activity"
             android:label="@string/title_activity_main2"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

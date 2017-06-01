@@ -3,28 +3,25 @@ package com.dyraid.dyraid;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.LoaderManager;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
-
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
-
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.text.TextUtils;
-import android.util.Log;//
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -32,11 +29,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.android.volley.Request;//
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;//
-import com.android.volley.toolbox.StringRequest;//
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
@@ -50,7 +47,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class BasicSignInActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class BasicSignUpActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -70,16 +67,20 @@ public class BasicSignInActivity extends AppCompatActivity implements LoaderCall
     private UserLoginTask mAuthTask = null;
 
     // UI references.
+    private EditText mUsernameView;
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
-    private View mLoginFormView;
+    private View mSignUpFormView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_basic_sign_in);
+        setContentView(R.layout.activity_basic_sign_up);
+
         // Set up the login form.
+        mUsernameView = (EditText) findViewById(R.id.username);
+
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
 
@@ -95,39 +96,33 @@ public class BasicSignInActivity extends AppCompatActivity implements LoaderCall
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.sign_in_button);
-        Button mRegisterLink = (Button) findViewById(R.id.link_to_sign_up);
-
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
+        Button mEmailRegisterButton = (Button) findViewById(R.id.register_button);
+        mEmailRegisterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final String mmUsername = mEmailView.getText().toString();
+                final String mmUsername = mUsernameView.getText().toString();
+                final String mmEmail = mEmailView.getText().toString();
                 String mmPassword = mPasswordView.getText().toString();
 
                 Response.Listener<String> responseListener = new Response.Listener<String>() {
-                // Response.Listener<JSONObject> responseListener = new Response.Listener<JSONObject>() {
+                    // Response.Listener<JSONObject> responseListener = new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(String response){
-                    //public void onResponse(JSONObject jsonResponse){
+                        //public void onResponse(JSONObject jsonResponse){
                         try {
                             JSONObject jsonResponse = new JSONObject(response);
                             // boolean success = jsonResponse.getBoolean("success");
                             boolean success = true;
 
                             if (success){
-                                //get user details
-                                //String email = jsonResponse.getString("email");
-                                //String password = jsonResponse.getString("password");
-
-                                // Intent myIntent = new Intent(BasicSignInActivity.this, MainActivity.class);
-                                Intent myIntent = new Intent(BasicSignInActivity.this, Main2Activity.class);
+                                Intent myIntent = new Intent(BasicSignUpActivity.this, Main2Activity.class);
                                 myIntent.putExtra("token", jsonResponse.get("key").toString());
                                 //myIntent.putExtra("email", email);
 
-                                BasicSignInActivity.this.startActivity(myIntent);
+                                BasicSignUpActivity.this.startActivity(myIntent);
                             }else{
-                                AlertDialog.Builder builder = new AlertDialog.Builder(BasicSignInActivity.this);
-                                builder.setMessage("Login Failed").setNegativeButton("Retry", null).create().show();
+                                AlertDialog.Builder builder = new AlertDialog.Builder(BasicSignUpActivity.this);
+                                builder.setMessage("Signup Failed").setNegativeButton("Retry", null).create().show();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -138,7 +133,7 @@ public class BasicSignInActivity extends AppCompatActivity implements LoaderCall
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e("onErrorResponse", error.toString());
-                        AlertDialog.Builder builder = new AlertDialog.Builder(BasicSignInActivity.this);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(BasicSignUpActivity.this);
                         builder.setMessage("Login Failed")
                                 .setNegativeButton("Retry", null)
                                 .create()
@@ -146,43 +141,15 @@ public class BasicSignInActivity extends AppCompatActivity implements LoaderCall
                     }
                 };
 
-                String url = "http://www.google.com";
-                StringRequest aSimpleRequest = new StringRequest(Request.Method.GET, url,
-                        new Response.Listener<String>() {
-                           @Override
-                            public void onResponse(String response) {
-                               mEmailView.setText(response);
-                           }
-                        },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                mEmailView.setText("Nope");
-                            }
-                        }
-                );
-
-                BasicSignInRequest basicSignInRequest = new BasicSignInRequest(mmUsername, mmPassword, responseListener, errorListener);
-                //BasicSignInRequest basicSignInRequest = new BasicSignInRequest(mmUsername, mmPassword,responseListener);
-                RequestQueue queue = Volley.newRequestQueue(BasicSignInActivity.this);
-                queue.add(basicSignInRequest);
-                //queue.add(jsonObjectRequest);
-                //queue.add(aSimpleRequest);
-
-
+                BasicSignUpRequest basicSignUpRequest = new BasicSignUpRequest(mmUsername, mmEmail, mmPassword, responseListener, errorListener);
+                RequestQueue queue = Volley.newRequestQueue(BasicSignUpActivity.this);
+                queue.add(basicSignUpRequest);
 
                 // attemptLogin();
             }
         });
 
-        mRegisterLink.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                Intent myIntent = new Intent(BasicSignInActivity.this, BasicSignUpActivity.class);
-                BasicSignInActivity.this.startActivity(myIntent);
-            }
-        });
-
-        mLoginFormView = findViewById(R.id.login_form);
+        mSignUpFormView = findViewById(R.id.signup_form);
         mProgressView = findViewById(R.id.login_progress);
     }
 
@@ -305,12 +272,12 @@ public class BasicSignInActivity extends AppCompatActivity implements LoaderCall
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
+            mSignUpFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            mSignUpFormView.animate().setDuration(shortAnimTime).alpha(
                     show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+                    mSignUpFormView.setVisibility(show ? View.GONE : View.VISIBLE);
                 }
             });
 
@@ -326,7 +293,7 @@ public class BasicSignInActivity extends AppCompatActivity implements LoaderCall
             // The ViewPropertyAnimator APIs are not available, so simply show
             // and hide the relevant UI components.
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            mSignUpFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
 
@@ -367,7 +334,7 @@ public class BasicSignInActivity extends AppCompatActivity implements LoaderCall
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
         ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(BasicSignInActivity.this,
+                new ArrayAdapter<>(BasicSignUpActivity.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
         mEmailView.setAdapter(adapter);
@@ -446,4 +413,5 @@ public class BasicSignInActivity extends AppCompatActivity implements LoaderCall
         }
     }
 }
+
 

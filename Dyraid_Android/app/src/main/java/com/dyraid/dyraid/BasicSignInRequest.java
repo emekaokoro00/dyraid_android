@@ -17,17 +17,16 @@ import java.util.Map;
  * Created by emekaokoro on 4/2/17.
  */
 
-public class LoginRequest extends StringRequest {
-    //private static final String LOGIN_REQUEST_URL = "http://localhost:8000/home/rest-auth/login";//Remove hardcode
-    private static final String LOGIN_REQUEST_URL = "http://192.168.56.56:8000/home/rest-auth/login/";//Remove hardcode
-    // private static final String LOGIN_REQUEST_URL = "http://192.168.56.56:8000/userlog/api/";//Remove hardcode
+public class BasicSignInRequest extends StringRequest {
+
+    private static final String LOGIN_REQUEST_URL = AppConfig.LOGIN_REQUEST_URL;
     private Map<String, String> params;
 
-    public LoginRequest(String email, String password, Response.Listener<String> listener, Response.ErrorListener errorListener){
+    public BasicSignInRequest(String username, String password, Response.Listener<String> listener, Response.ErrorListener errorListener){
         super(Request.Method.POST, LOGIN_REQUEST_URL, listener, errorListener);
         params = new HashMap<>();
         // params.put("username", "adaeze");
-        params.put("username", email);
+        params.put("username", username);
         params.put("password", password);
     }
 
@@ -65,11 +64,11 @@ public class LoginRequest extends StringRequest {
 //    }
 }
 
-//public class LoginRequest extends JsonObjectRequest {
+//public class BasicSignInRequest extends JsonObjectRequest {
 //    private static final String LOGIN_REQUEST_URL = "http://localhost:8000/home/rest-auth/login";//Remove hardcode
 //    private Map<String, String> params;
 //
-//    public LoginRequest(String email, String password, Response.Listener<JSONObject> listener){
+//    public BasicSignInRequest(String email, String password, Response.Listener<JSONObject> listener){
 //        super(Request.Method.POST, LOGIN_REQUEST_URL, null, listener, null);
 //        params = new HashMap<>();
 //        params.put("username", "adaeze");
