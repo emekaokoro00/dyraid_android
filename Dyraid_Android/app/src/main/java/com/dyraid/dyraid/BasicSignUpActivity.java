@@ -97,6 +97,8 @@ public class BasicSignUpActivity extends AppCompatActivity implements LoaderMana
         });
 
         Button mEmailRegisterButton = (Button) findViewById(R.id.register_button);
+        Button mSignInLink = (Button) findViewById(R.id.link_to_sign_in);
+
         mEmailRegisterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -146,6 +148,13 @@ public class BasicSignUpActivity extends AppCompatActivity implements LoaderMana
                 queue.add(basicSignUpRequest);
 
                 // attemptLogin();
+            }
+        });
+
+        mSignInLink.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                Intent myIntent = new Intent(BasicSignUpActivity.this, BasicSignInActivity.class);
+                BasicSignUpActivity.this.startActivity(myIntent);
             }
         });
 

@@ -96,7 +96,7 @@ public class BasicSignInActivity extends AppCompatActivity implements LoaderCall
         });
 
         Button mEmailSignInButton = (Button) findViewById(R.id.sign_in_button);
-        Button mRegisterLink = (Button) findViewById(R.id.link_to_sign_up);
+        Button mSignUpLink = (Button) findViewById(R.id.link_to_sign_up);
 
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -175,7 +175,7 @@ public class BasicSignInActivity extends AppCompatActivity implements LoaderCall
             }
         });
 
-        mRegisterLink.setOnClickListener(new View.OnClickListener() {
+        mSignUpLink.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Intent myIntent = new Intent(BasicSignInActivity.this, BasicSignUpActivity.class);
                 BasicSignInActivity.this.startActivity(myIntent);
